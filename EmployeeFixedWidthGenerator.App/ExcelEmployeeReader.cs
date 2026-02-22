@@ -4,7 +4,7 @@ namespace EmployeeFixedWidthGenerator.App;
 
 internal sealed class ExcelEmployeeReader
 {
-    private static readonly string[] RequiredColumns =
+    public static readonly string[] RequiredColumns =
     {
         "FULL_NAME",
         "SSN",
@@ -60,6 +60,27 @@ internal sealed class ExcelEmployeeReader
         }
 
         return rows;
+    }
+
+    public void GenerateTemplate(string destinationPath)
+    {
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.AddWorksheet("Employees");
+
+        for (int i = 0; i < RequiredColumns.Length; i++)
+        {
+            worksheet.Cell(1, i + 1).Value = RequiredColumns[i];
+            worksheet.Cell(1, i + 1).Style.Font.Bold = true;
+        }
+
+        worksheet.Cell(2, 1).Value = "JUAN CARLOS PEREZ LOPEZ";
+        worksheet.Cell(2, 2).Value = "123-45-6789";
+        worksheet.Cell(2, 3).Value = "1234.56";
+        worksheet.Cell(2, 4).Value = "1234567890";
+        worksheet.Cell(2, 5).Value = "001";
+
+        worksheet.Columns(1, RequiredColumns.Length).AdjustToContents();
+        workbook.SaveAs(destinationPath);
     }
 
     private static void EnsurePresent(int rowNumber, string columnName, string value)

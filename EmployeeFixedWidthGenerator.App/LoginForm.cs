@@ -7,6 +7,11 @@ public sealed class LoginForm : Form
     private readonly ComboBox _language = new() { Width = 140, DropDownStyle = ComboBoxStyle.DropDownList };
     private readonly Label _error = new() { ForeColor = Color.Firebrick, AutoSize = true };
 
+    private readonly Label _languageLabel = new() { AutoSize = true };
+    private readonly Label _userLabel = new() { AutoSize = true };
+    private readonly Label _passwordLabel = new() { AutoSize = true };
+    private readonly Button _loginButton = new() { Width = 100, Height = 32 };
+
     private int _failedAttempts;
     private DateTime _lockedUntilUtc = DateTime.MinValue;
 
@@ -29,35 +34,40 @@ public sealed class LoginForm : Form
             ApplyLanguage();
         };
 
-        var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(20), ColumnCount = 2, RowCount = 5 };
+        _loginButton.Click += (_, _) => DoLogin();
+
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            Padding = new Padding(20),
+            ColumnCount = 2,
+            RowCount = 5
+        };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
-        var loginBtn = new Button { Width = 100, Height = 32 };
-        loginBtn.Click += (_, _) => DoLogin();
-
-        layout.Controls.Add(new Label { Name = "lblLanguage", AutoSize = true }, 0, 0);
+        layout.Controls.Add(_languageLabel, 0, 0);
         layout.Controls.Add(_language, 1, 0);
-        layout.Controls.Add(new Label { Name = "lblUser", AutoSize = true }, 0, 1);
+        layout.Controls.Add(_userLabel, 0, 1);
         layout.Controls.Add(_user, 1, 1);
-        layout.Controls.Add(new Label { Name = "lblPassword", AutoSize = true }, 0, 2);
+        layout.Controls.Add(_passwordLabel, 0, 2);
         layout.Controls.Add(_password, 1, 2);
-        layout.Controls.Add(loginBtn, 1, 3);
+        layout.Controls.Add(_loginButton, 1, 3);
         layout.Controls.Add(_error, 1, 4);
 
         Controls.Add(layout);
-        AcceptButton = loginBtn;
+        AcceptButton = _loginButton;
 
         ApplyLanguage();
+    }
 
-        void ApplyLanguage()
-        {
-            Text = Localization.T("LoginTitle", SelectedLanguage);
-            ((Label)layout.Controls["lblLanguage"]).Text = Localization.T("Language", SelectedLanguage);
-            ((Label)layout.Controls["lblUser"]).Text = Localization.T("User", SelectedLanguage);
-            ((Label)layout.Controls["lblPassword"]).Text = Localization.T("Password", SelectedLanguage);
-            loginBtn.Text = Localization.T("Login", SelectedLanguage);
-        }
+    private void ApplyLanguage()
+    {
+        Text = Localization.T("LoginTitle", SelectedLanguage);
+        _languageLabel.Text = Localization.T("Language", SelectedLanguage);
+        _userLabel.Text = Localization.T("User", SelectedLanguage);
+        _passwordLabel.Text = Localization.T("Password", SelectedLanguage);
+        _loginButton.Text = Localization.T("Login", SelectedLanguage);
     }
 
     private void DoLogin()

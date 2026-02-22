@@ -1,6 +1,6 @@
 namespace EmployeeFixedWidthGenerator.App;
 
-internal enum AppLanguage
+public enum AppLanguage
 {
     English,
     Spanish
